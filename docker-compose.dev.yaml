@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  web-api:
+    build: "./api"
+    ports:
+      - 8080:8080
+
+    restart: always
+    environment:
+      - PORT=8080
+      - REDIS_PORT=6380
+      - REDIS_HOST='redis-db'
+
+  redis-db:
+    build: "./db"
+    ports:
+      - 6380:6380
+
+
+
