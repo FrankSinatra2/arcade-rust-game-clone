@@ -4,22 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "nodemon ./src/lib/server.js",
-    "start": "node ./src/lib/server.js",
+    "start:dev": "nodemon --exec babel-node ./src/lib/server.js",
+    "start": "node ./build/lib/server.js",
     "build": "babel src -d build"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.0",
+    "core-js": "^3.17.2",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "ioredis": "^4.27.9",
     "jsonwebtoken": "^8.5.1",
+    "regenerator-runtime": "^0.13.9",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.15.4",
     "@babel/core": "^7.15.5",
+    "@babel/node": "^7.15.4",
+    "@babel/preset-env": "^7.15.4",
     "nodemon": "^2.0.12"
   }
 }

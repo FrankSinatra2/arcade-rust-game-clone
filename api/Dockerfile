@@ -8,10 +8,13 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
+RUN npm install -g npm@7.9.0
 RUN npm install
 
 # Bundle app source
 COPY . .
+
+RUN npm run build
 
 ENTRYPOINT [ "npm" ]
 CMD [ "run", "start" ]

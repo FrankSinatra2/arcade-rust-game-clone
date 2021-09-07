@@ -20,10 +20,10 @@ export class AccountService {
 
     return bcrypt.hash(password, config.bcrypt.saltRounds)
       .catch(err => {
-        return {
+         return Promise.resolve({
           status: 500,
           message: 'Failed to hash password'
-        };
+        });
       })
       .then(hashedPwd => {
         const account = {
@@ -32,19 +32,19 @@ export class AccountService {
           id: uuid()
         };
         return this.redis.setnx(key, JSON.stringify(account))
+          .catch(err => {
+            return Promise.reject({
+              status: 500,
+              message: 'Redis failed to write account'
+            });
+          });
       })
       .then(exists => {
         
         const status = exists === 0 ? 409 : 200;
         const message = exists === 0 ? 'Redis failed to write account' : 'Account created';
         
-        return { status, message };
-      })
-      .catch(err => {
-        return {
-          status: 500,
-          message: 'Redis failed to write account'
-        };
+        return Promise.resolve({ status, message });
       });
   }
 
@@ -54,16 +54,16 @@ export class AccountService {
 
     return this.redis.del(key)
       .then(() => {
-        return {
+        return Promise.resolve({
           status: 200,
           message: 'Account deleted'
-        }
+        });
       })
       .catch(() => {
-        return {
+        return Promise.reject({
           status: 500,
           message: 'Failed to delete account'
-        }
+        });
       });
   }
 
@@ -74,16 +74,16 @@ export class AccountService {
     return this.redis.get(key)
       .then((result) => {
         const account = JSON.parse(result);
-        return {
+        return Promise.resolve({
           status: 200,
           ...account
-        }
+        });
       })
       .catch(() => {
-        return {
+        return Promise.reject({
           status: 404,
           message: 'Failed to retrieve account'
-        }
+        });
       })
   }
 
@@ -104,7 +104,7 @@ export class AccountService {
         return jwt.sign({ ...data }, config.auth.secret);
       };
 
-      stream.on("data", (keys) => {
+      stream.on("data", async (keys) => {
         for (const key of keys) {
 
           try {
@@ -132,6 +132,6 @@ export class AccountService {
       stream.on("close", () => {
         account ? resolve(signAccount(account)) : reject({ status: 404, message: 'Account not found' });
       });
-    })
+    });
   }
 }

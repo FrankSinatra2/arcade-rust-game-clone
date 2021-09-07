@@ -9,7 +9,7 @@ services:
     environment:
       - PORT=8080
       - REDIS_PORT=6380
-      - REDIS_HOST='redis-db'
+      - REDIS_HOST=redis-db
 
   redis-db:
     build: "./db"
